@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BRICSZ | Geopolitical Intelligence &amp; Trade Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Hanken+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset & Base ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{background:#121414;color:#e2e2e2;font-family:'Hanken Grotesk',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input{font-family:inherit}
+::selection{background:#D97706;color:#0c0f0f}
+
+/* ── CSS Variables ────────────────────────────────── */
+:root{
+  --gold:#D97706;
+  --surface:#121414;
+  --surface-low:#1a1c1c;
+  --surface-mid:#1e2020;
+  --surface-high:#282a2b;
+  --surface-highest:#333535;
+  --surface-lowest:#0c0f0f;
+  --on-surface:#e2e2e2;
+  --on-surface-variant:#dbc2b0;
+  --outline:#a38c7c;
+  --outline-variant:#554336;
+  --primary:#ffb77d;
+  --slate800:#1E293B;
+  --slate900:#0F172A;
+  --green:#22c55e;
+  --red:#ef4444;
+}
+
+/* ── Typography helpers ───────────────────────────── */
+.font-mono{font-family:'JetBrains Mono',monospace}
+.font-serif{font-family:'Libre Caslon Text',serif}
+.font-sans{font-family:'Hanken Grotesk',sans-serif}
+
+/* ── Material Icons ───────────────────────────────── */
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:middle;display:inline-block;font-size:22px;line-height:1}
+
+/* ══════════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════════ */
+.ticker-wrap{width:100%;background:var(--surface-lowest);border-bottom:1px solid var(--outline-variant);height:32px;overflow:hidden;display:flex;align-items:center;position:relative;z-index:70}
+.ticker-track{display:flex;white-space:nowrap;animation:ticker 80s linear infinite}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{display:inline-flex;align-items:center;gap:6px;margin-right:48px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--on-surface-variant)}
+.ticker-item .label{color:var(--gold)}
+.ticker-item .up{color:var(--green)}
+.ticker-item .down{color:var(--red)}
+
+/* ══════════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════════ */
+#site-nav{position:sticky;top:0;z-index:50;background:rgba(18,20,20,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--outline-variant);transition:transform .3s ease}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;max-width:1280px;margin:0 auto;padding:16px 20px}
+@media(min-width:768px){.nav-inner{padding:16px 80px}}
+.nav-logo{font-family:'Libre Caslon Text',serif;font-size:32px;line-height:1.1;letter-spacing:-.04em;text-transform:uppercase;cursor:pointer;color:var(--on-surface)}
+@media(min-width:768px){.nav-logo{font-size:48px}}
+.nav-links{display:none;gap:32px;align-items:center}
+@media(min-width:768px){.nav-links{display:flex}}
+.nav-link{font-family:'Hanken Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--on-surface-variant);transition:color .25s}
+.nav-link:hover{color:var(--primary)}
+.nav-link.active{color:var(--gold);border-bottom:2px solid var(--gold);padding-bottom:2px}
+.nav-actions{display:flex;align-items:center;gap:20px}
+.btn-subscribe{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;background:var(--gold);color:var(--surface);padding:8px 20px;display:none;transition:opacity .2s}
+.btn-subscribe:hover{opacity:.88}
+@media(min-width:768px){.btn-subscribe{display:block}}
+.btn-icon{color:var(--on-surface-variant);transition:color .2s;background:none;border:none;cursor:pointer}
+.btn-icon:hover{color:var(--primary)}
+.btn-menu-open{color:var(--on-surface)}
+@media(min-width:768px){.btn-menu-open{display:none}}
+
+/* Progress bar */
+#progress-bar{height:3px;background:linear-gradient(to right,var(--gold) var(--scroll,0%),transparent 0);width:100%}
+
+/* ══════════════════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════════════════ */
+#mobile-menu{position:fixed;inset:0;background:var(--surface);z-index:100;transform:translateX(100%);transition:transform .45s cubic-bezier(.77,0,.18,1);padding:24px}
+#mobile-menu.open{transform:translateX(0)}
+.mobile-menu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px}
+.mobile-nav-link{display:block;font-family:'Libre Caslon Text',serif;font-size:28px;color:var(--on-surface);border-bottom:1px solid var(--outline-variant);padding-bottom:12px;margin-bottom:0}
+.mobile-nav-link.active{color:var(--gold)}
+.mobile-nav-links{display:flex;flex-direction:column;gap:24px}
+
+/* ══════════════════════════════════════════════════
+   PAGE SYSTEM
+══════════════════════════════════════════════════ */
+.page{display:none}
+.page.active{display:block}
+
+/* ══════════════════════════════════════════════════
+   LAYOUT UTILITIES
+══════════════════════════════════════════════════ */
+.container{max-width:1280px;margin:0 auto;padding:0 20px}
+@media(min-width:768px){.container{padding:0 80px}}
+.section{margin-top:80px}
+@media(min-width:768px){.section{margin-top:120px}}
+
+/* Grid */
+.grid-12{display:grid;grid-template-columns:1fr;gap:32px}
+@media(min-width:1024px){.grid-12{grid-template-columns:repeat(12,1fr)}}
+.col-8{grid-column:1/-1}
+@media(min-width:1024px){.col-8{grid-column:span 8}}
+.col-4{grid-column:1/-1}
+@media(min-width:1024px){.col-4{grid-column:span 4}}
+.col-1{display:none}
+@media(min-width:768px){.col-1{display:block;grid-column:span 1}}
+.col-art{grid-column:1/-1}
+@media(min-width:768px){.col-art{grid-column:3/span 8}}
+.grid-3{display:grid;grid-template-columns:1fr;gap:32px}
+@media(min-width:768px){.grid-3{grid-template-columns:repeat(3,1fr)}}
+.grid-2{display:grid;grid-template-columns:1fr;gap:32px}
+@media(min-width:768px){.grid-2{grid-template-columns:repeat(2,1fr)}}
+
+/* ══════════════════════════════════════════════════
+   HERO — HOME
+══════════════════════════════════════════════════ */
+.hero-home{margin-top:32px;position:relative;overflow:hidden;aspect-ratio:21/9;cursor:pointer}
+@media(min-width:768px){.hero-home{margin-top:48px}}
+.hero-home img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%) brightness(.9);transition:transform 1s ease,filter .6s ease}
+.hero-home:hover img{transform:scale(1.04);filter:grayscale(0%) brightness(1.05)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(12,15,15,1) 0%,rgba(12,15,15,.5) 40%,rgba(12,15,15,0) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:32px}
+@media(min-width:768px){.hero-overlay{padding:64px}}
+.hero-kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block}
+.hero-title{font-family:'Libre Caslon Text',serif;font-size:32px;line-height:1.1;color:#fff;margin-bottom:20px}
+@media(min-width:768px){.hero-title{font-size:56px}}
+.hero-desc{font-family:'Hanken Grotesk',sans-serif;font-size:17px;line-height:1.65;color:var(--on-surface-variant);max-width:600px}
+@media(min-width:768px){.hero-desc{font-size:19px}}
+.hero-meta{margin-top:24px;display:flex;align-items:center;gap:12px;color:var(--on-surface-variant)}
+.meta-dot{width:4px;height:4px;background:var(--outline-variant);border-radius:50%;display:inline-block}
+.meta-text{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+
+/* ══════════════════════════════════════════════════
+   SECTION HEADERS
+══════════════════════════════════════════════════ */
+.section-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--outline-variant);padding-bottom:16px;margin-bottom:40px}
+.section-title{font-family:'Libre Caslon Text',serif;font-size:26px;text-transform:uppercase;letter-spacing:.1em;color:var(--on-surface)}
+@media(min-width:768px){.section-title{font-size:30px}}
+.section-link{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.section-link:hover{text-decoration:underline}
+
+/* ══════════════════════════════════════════════════
+   CARDS — ENERGY FRONTIERS
+══════════════════════════════════════════════════ */
+.card-feature{cursor:pointer}
+.card-feature-img{position:relative;overflow:hidden;aspect-ratio:16/9;border:1px solid var(--outline-variant)}
+.card-feature-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(25%) brightness(.85);transition:transform .7s ease,filter .6s ease}
+.card-feature:hover .card-feature-img img{transform:scale(1.05);filter:grayscale(0%) brightness(1.05)}
+.card-badge{position:absolute;top:12px;left:12px;background:rgba(18,20,20,.8);backdrop-filter:blur(6px);border:1px solid var(--outline-variant);padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;color:#fff}
+.card-feature-body{margin-top:20px}
+.card-kicker{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block}
+.card-title-lg{font-family:'Libre Caslon Text',serif;font-size:26px;line-height:1.25;color:var(--on-surface);margin-bottom:12px;transition:color .2s}
+.card-feature:hover .card-title-lg{color:var(--gold)}
+.card-desc{font-family:'Hanken Grotesk',sans-serif;font-size:17px;line-height:1.6;color:var(--on-surface-variant)}
+
+/* Sidebar articles */
+.sidebar-article{cursor:pointer;border-bottom:1px solid var(--outline-variant);padding-bottom:24px}
+.sidebar-article:last-child{border-bottom:none}
+.sidebar-title{font-family:'Libre Caslon Text',serif;font-size:22px;line-height:1.3;color:var(--on-surface);transition:color .2s;margin-bottom:8px}
+.sidebar-article:hover .sidebar-title{color:var(--gold)}
+.sidebar-desc{font-family:'Hanken Grotesk',sans-serif;font-size:15px;line-height:1.55;color:var(--on-surface-variant)}
+
+/* ══════════════════════════════════════════════════
+   ANALYST DESK CARDS
+══════════════════════════════════════════════════ */
+.analyst-card{background:var(--surface-low);border:1px solid var(--outline-variant);padding:32px;cursor:pointer;display:flex;flex-direction:column;height:100%;transition:border-color .25s}
+.analyst-card:hover{border-color:var(--gold)}
+.analyst-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.analyst-badge{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;border:1px solid var(--outline-variant);padding:2px 8px;color:var(--on-surface-variant)}
+.analyst-title{font-family:'Libre Caslon Text',serif;font-size:22px;line-height:1.3;color:var(--on-surface);margin-bottom:16px}
+.analyst-desc{font-family:'Hanken Grotesk',sans-serif;font-size:14px;line-height:1.6;color:var(--on-surface-variant);flex-grow:1;margin-bottom:24px}
+.analyst-author{display:flex;align-items:center;gap:12px}
+.analyst-avatar{width:40px;height:40px;background:var(--slate800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);flex-shrink:0}
+.analyst-name{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--on-surface)}
+.analyst-role{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--on-surface-variant)}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR WIDGETS
+══════════════════════════════════════════════════ */
+.widget{margin-bottom:48px}
+.widget-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--outline-variant);padding-bottom:14px;margin-bottom:24px}
+.market-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(85,67,54,.3)}
+.market-row:last-child{border-bottom:none}
+.market-name{font-family:'Hanken Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--on-surface)}
+.market-val{font-family:'JetBrains Mono',monospace;font-size:11px}
+.market-val.up{color:var(--green)}
+.market-val.down{color:var(--red)}
+.market-val.flat{color:var(--on-surface-variant)}
+.trend-item{cursor:pointer;display:flex;gap:16px;align-items:flex-start}
+.trend-num{font-family:'Libre Caslon Text',serif;font-size:28px;color:var(--outline-variant);line-height:1;flex-shrink:0;transition:color .2s}
+.trend-item:hover .trend-num{color:var(--gold)}
+.trend-text{font-family:'Libre Caslon Text',serif;font-size:17px;line-height:1.35;color:var(--on-surface);transition:transform .2s}
+.trend-item:hover .trend-text{transform:translateX(4px)}
+.newsletter-box{background:var(--surface-high);padding:32px;border:1px solid rgba(217,119,6,.3);margin-top:48px}
+.newsletter-title{font-family:'Libre Caslon Text',serif;font-size:20px;color:var(--on-surface);margin-bottom:12px}
+.newsletter-desc{font-family:'Hanken Grotesk',sans-serif;font-size:14px;color:var(--on-surface-variant);margin-bottom:24px;line-height:1.6}
+.newsletter-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--outline);color:var(--on-surface);font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 0;outline:none;margin-bottom:12px;transition:border-color .2s}
+.newsletter-input:focus{border-color:var(--gold)}
+.newsletter-input::placeholder{color:rgba(219,194,176,.4)}
+.newsletter-btn{width:100%;background:var(--gold);color:var(--surface);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:14px;cursor:pointer;border:none;transition:opacity .2s}
+.newsletter-btn:hover{opacity:.88}
+
+/* ══════════════════════════════════════════════════
+   STICKY SIDEBAR
+══════════════════════════════════════════════════ */
+.sidebar-sticky{position:sticky;top:88px}
+
+/* ══════════════════════════════════════════════════
+   ARTICLE HERO
+══════════════════════════════════════════════════ */
+.article-hero{position:relative;width:100%;height:85vh;overflow:hidden}
+.article-hero img{width:100%;height:100%;object-fit:cover}
+.article-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,#121414 0%,rgba(18,20,20,.4) 50%,transparent 100%)}
+.article-hero-content{position:absolute;bottom:0;left:0;right:0;max-width:1280px;margin:0 auto;padding:0 20px 80px}
+@media(min-width:768px){.article-hero-content{padding:0 80px 80px}}
+.article-tag{display:inline-block;background:rgba(217,119,6,.18);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(217,119,6,.3);margin-bottom:20px}
+.article-read-time{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-surface-variant)}
+.article-title{font-family:'Libre Caslon Text',serif;font-size:34px;line-height:1.1;color:var(--on-surface);max-width:900px}
+@media(min-width:768px){.article-title{font-size:60px}}
+.article-byline{display:flex;align-items:center;gap:16px;margin-top:40px}
+.article-author-img{width:64px;height:64px;object-fit:cover;filter:grayscale(1) brightness(.75);border:1px solid var(--outline-variant)}
+.article-author-name{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-surface)}
+.article-author-role{font-family:'Hanken Grotesk',sans-serif;font-size:14px;color:var(--on-surface-variant);font-style:italic;margin-top:4px}
+
+/* ══════════════════════════════════════════════════
+   ARTICLE BODY
+══════════════════════════════════════════════════ */
+.article-section{max-width:1280px;margin:0 auto;padding:48px 20px}
+@media(min-width:768px){.article-section{padding:80px 80px;display:grid;grid-template-columns:48px 1fr;gap:32px}}
+.article-controls{display:none}
+@media(min-width:768px){.article-controls{display:flex;flex-direction:column;align-items:center;gap:24px;position:sticky;top:100px;height:fit-content}}
+.article-ctrl-btn{color:var(--on-surface-variant);transition:color .2s;background:none;border:none;cursor:pointer}
+.article-ctrl-btn:hover{color:var(--gold)}
+.ctrl-divider{width:1px;height:40px;background:var(--outline-variant);margin:4px 0}
+.ctrl-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-surface-variant);writing-mode:vertical-rl;margin-top:16px}
+.article-body p{font-family:'Hanken Grotesk',sans-serif;font-size:18px;line-height:1.75;color:rgba(226,226,226,.92)}
+@media(min-width:768px){.article-body p{font-size:20px}}
+.article-body p+p{margin-top:28px}
+.article-body p:first-of-type::first-letter{float:left;font-family:'Libre Caslon Text',serif;font-size:80px;line-height:64px;padding-right:10px;padding-top:4px;color:var(--gold)}
+.article-blockquote{border-left:4px solid var(--gold);padding:20px 32px;margin:48px 0}
+.article-blockquote-text{font-family:'Libre Caslon Text',serif;font-size:26px;line-height:1.35;font-style:italic;color:var(--gold);margin-bottom:16px}
+@media(min-width:768px){.article-blockquote-text{font-size:30px}}
+.article-blockquote-cite{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-surface)}
+.article-figure{margin:48px 0;border:1px solid var(--outline-variant);overflow:hidden;position:relative}
+.article-figure img{width:100%;aspect-ratio:21/9;object-fit:cover;display:block;filter:grayscale(1) brightness(.5);transition:filter .7s ease}
+.article-figure:hover img{filter:grayscale(0%) brightness(1)}
+.article-caption{position:absolute;bottom:0;left:0;right:0;padding:20px 24px;background:linear-gradient(to top,rgba(18,20,20,1),rgba(18,20,20,.8) 60%,transparent);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--on-surface-variant)}
+.article-tags{display:flex;flex-wrap:wrap;gap:12px;margin-top:60px;padding-top:40px;border-top:1px solid var(--outline-variant)}
+.article-tag-chip{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--outline-variant);color:var(--on-surface-variant);padding:6px 14px;cursor:pointer;transition:background .2s}
+.article-tag-chip:hover{background:var(--slate800)}
+
+/* ══════════════════════════════════════════════════
+   RECOMMENDED INTELLIGENCE
+══════════════════════════════════════════════════ */
+.rec-section{background:var(--surface-low);padding:80px 20px}
+@media(min-width:768px){.rec-section{padding:100px 80px}}
+.rec-inner{max-width:1280px;margin:0 auto}
+.rec-header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--outline-variant);padding-bottom:20px;margin-bottom:40px}
+.rec-title{font-family:'Libre Caslon Text',serif;font-size:28px;color:var(--on-surface)}
+.rec-link{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:6px}
+.rec-link:hover{opacity:.75}
+.rec-card{cursor:pointer}
+.rec-img{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--outline-variant);margin-bottom:20px}
+.rec-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.7);transition:filter .5s ease,transform .5s ease}
+.rec-card:hover .rec-img img{filter:grayscale(0%) brightness(1.05);transform:scale(1.04)}
+.rec-kicker{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block}
+.rec-card-title{font-family:'Libre Caslon Text',serif;font-size:22px;line-height:1.3;color:var(--on-surface);transition:color .2s}
+.rec-card:hover .rec-card-title{color:var(--gold)}
+
+/* ══════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════ */
+.footer{background:var(--surface-lowest);border-top:1px solid var(--outline-variant);margin-top:80px}
+@media(min-width:768px){.footer{margin-top:120px}}
+.footer-inner{display:flex;flex-direction:column;gap:48px;max-width:1280px;margin:0 auto;padding:80px 20px}
+@media(min-width:768px){.footer-inner{flex-direction:row;justify-content:space-between;padding:100px 80px}}
+.footer-brand-name{font-family:'Libre Caslon Text',serif;font-size:36px;text-transform:uppercase;letter-spacing:-.03em;color:var(--on-surface);margin-bottom:20px}
+.footer-tagline{font-family:'Hanken Grotesk',sans-serif;font-size:14px;color:var(--on-surface-variant);max-width:280px;line-height:1.6;margin-bottom:28px}
+.footer-socials{display:flex;gap:16px}
+.footer-social-btn{width:36px;height:36px;border:1px solid var(--outline-variant);display:flex;align-items:center;justify-content:center;color:var(--on-surface-variant);font-size:13px;font-weight:700;cursor:pointer;transition:color .2s,border-color .2s;background:none}
+.footer-social-btn:hover{color:var(--gold);border-color:var(--gold)}
+.footer-links-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 64px}
+.footer-col-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.footer-link{display:block;font-family:'Hanken Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--on-surface-variant);margin-bottom:14px;transition:color .2s}
+.footer-link:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(85,67,54,.3);padding:24px 20px;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+@media(min-width:768px){.footer-bottom{flex-direction:row;justify-content:space-between;align-items:center;padding:24px 80px}}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(219,194,176,.45)}
+.footer-legal{display:flex;gap:20px}
+.footer-legal a{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(219,194,176,.45);transition:color .2s}
+.footer-legal a:hover{color:#fff}
+
+/* ══════════════════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE TWEAKS
+══════════════════════════════════════════════════ */
+.hide-mobile{display:none}
+@media(min-width:768px){.hide-mobile{display:block}}
+.trends-list{display:flex;flex-direction:column;gap:28px}
+</style>
+</head>
+<body>
+
+<!-- ═══ TICKER ══════════════════════════════════════ -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <!-- set 1 -->
+    <span class="ticker-item"><span class="label">USD/CNY</span> 7.2410 <span class="up">▲ 0.12%</span></span>
+    <span class="ticker-item"><span class="label">BRENT CRUDE</span> $82.45 <span class="down">▼ 0.45%</span></span>
+    <span class="ticker-item"><span class="label">GOLD</span> $2,341.20 <span class="up">▲ 0.88%</span></span>
+    <span class="ticker-item"><span class="label">RUB/INR</span> 0.9122 <span class="flat">0.00%</span></span>
+    <span class="ticker-item"><span class="label">WHEAT</span> $562.50 <span class="up">▲ 1.22%</span></span>
+    <span class="ticker-item"><span class="label">SHANGHAI COMPOSITE</span> 3,052.41 <span class="up">▲ 0.45%</span></span>
+    <span class="ticker-item"><span class="label">MOEX RUSSIA</span> 3,248.12 <span class="down">▼ 0.12%</span></span>
+    <span class="ticker-item"><span class="label">NIFTY 50</span> 22,096.75 <span class="up">▲ 1.20%</span></span>
+    <span class="ticker-item"><span class="label">BTC/USD</span> $67,421.00 <span class="up">▲ 2.14%</span></span>
+    <span class="ticker-item"><span class="label">BOVESPA</span> 127,492.00 <span class="up">▲ 0.32%</span></span>
+    <!-- set 2 (duplicate for seamless loop) -->
+    <span class="ticker-item"><span class="label">USD/CNY</span> 7.2410 <span class="up">▲ 0.12%</span></span>
+    <span class="ticker-item"><span class="label">BRENT CRUDE</span> $82.45 <span class="down">▼ 0.45%</span></span>
+    <span class="ticker-item"><span class="label">GOLD</span> $2,341.20 <span class="up">▲ 0.88%</span></span>
+    <span class="ticker-item"><span class="label">RUB/INR</span> 0.9122 <span class="flat">0.00%</span></span>
+    <span class="ticker-item"><span class="label">WHEAT</span> $562.50 <span class="up">▲ 1.22%</span></span>
+    <span class="ticker-item"><span class="label">SHANGHAI COMPOSITE</span> 3,052.41 <span class="up">▲ 0.45%</span></span>
+    <span class="ticker-item"><span class="label">MOEX RUSSIA</span> 3,248.12 <span class="down">▼ 0.12%</span></span>
+    <span class="ticker-item"><span class="label">NIFTY 50</span> 22,096.75 <span class="up">▲ 1.20%</span></span>
+    <span class="ticker-item"><span class="label">BTC/USD</span> $67,421.00 <span class="up">▲ 2.14%</span></span>
+    <span class="ticker-item"><span class="label">BOVESPA</span> 127,492.00 <span class="up">▲ 0.32%</span></span>
+  </div>
+</div>
+
+<!-- ═══ NAV ═════════════════════════════════════════ -->
+<header id="site-nav">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="showPage('home')">BRICSZ</div>
+    <nav class="nav-links">
+      <a class="nav-link active" href="#" onclick="showPage('home');return false;">BRICS</a>
+      <a class="nav-link" href="#">Global Economy</a>
+      <a class="nav-link" href="#" onclick="showPage('article');return false;">Nuclear Energy</a>
+      <a class="nav-link" href="#">Geopolitics</a>
+      <a class="nav-link" href="#">Trade</a>
+      <a class="nav-link" href="#">Markets</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn-icon"><span class="material-symbols-outlined" style="font-size:20px">search</span></button>
+      <button class="btn-subscribe">Subscribe</button>
+      <button class="btn-menu-open btn-icon" id="menu-open"><span class="material-symbols-outlined">menu</span></button>
+    </div>
+  </div>
+  <div id="progress-bar" style="display:none"></div>
+</header>
+
+<!-- ═══ MOBILE MENU ══════════════════════════════════ -->
+<div id="mobile-menu">
+  <div class="mobile-menu-header">
+    <span class="nav-logo">BRICSZ</span>
+    <button class="btn-icon" id="menu-close"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="mobile-nav-links">
+    <a class="mobile-nav-link active" href="#" onclick="showPage('home');closeMobileMenu();return false;">BRICS</a>
+    <a class="mobile-nav-link" href="#">Global Economy</a>
+    <a class="mobile-nav-link" href="#" onclick="showPage('article');closeMobileMenu();return false;">Nuclear Energy</a>
+    <a class="mobile-nav-link" href="#">Geopolitics</a>
+    <a class="mobile-nav-link" href="#">Trade</a>
+    <a class="mobile-nav-link" href="#">Markets</a>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     HOME PAGE
+════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <main>
+    <div class="container">
+
+      <!-- Hero -->
+      <div class="hero-home" onclick="showPage('article')">
+        <img
+          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1600&q=85&fit=crop"
+          alt="Shipping port at dusk — the new silk road"
+          onerror="this.src='https://picsum.photos/seed/port/1600/700'"
+        />
+        <div class="hero-overlay">
+          <span class="hero-kicker">Cover Story / Global Trade</span>
+          <h1 class="hero-title">The New Silk Road: How BRICS Infrastructure is Redrawing the Global Trade Map</h1>
+          <p class="hero-desc">A deep dive into the multi-trillion dollar logistical corridors spanning Eurasia and Africa, challenging established maritime routes and shifting the center of economic gravity eastward.</p>
+          <div class="hero-meta">
+            <span class="meta-text">By Dr. Mikhail Volkov</span>
+            <span class="meta-dot"></span>
+            <span class="meta-text">12 Min Read</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Energy Frontiers -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Energy Frontiers</h2>
+          <a class="section-link" href="#">View All Intelligence</a>
+        </div>
+        <div class="grid-12">
+          <!-- Large Feature -->
+          <div class="col-8">
+            <div class="card-feature reveal" onclick="showPage('article')">
+              <div class="card-feature-img">
+                <img
+                  src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&q=85&fit=crop"
+                  alt="Nuclear energy infrastructure"
+                  onerror="this.src='https://picsum.photos/seed/nuclear/1200/675'"
+                />
+                <div class="card-badge">Special Report</div>
+              </div>
+              <div class="card-feature-body">
+                <h3 class="card-title-lg">Atomic Sovereignty: The Russian-Chinese Nuclear Partnership</h3>
+                <p class="card-desc">Exploring the strategic alliance in advanced modular reactors and its implications for European energy independence and global non-proliferation frameworks.</p>
+              </div>
+            </div>
+          </div>
+          <!-- Sidebar -->
+          <div class="col-4" style="display:flex;flex-direction:column;gap:28px">
+            <div class="sidebar-article reveal">
+              <span class="card-kicker">Technology</span>
+              <h4 class="sidebar-title">Nuclear Fusion: The South African Venture Into Sustainable Base-Load</h4>
+              <p class="sidebar-desc">New investment consortiums target the Cape region for first-generation pilot plants.</p>
+            </div>
+            <div class="sidebar-article reveal">
+              <span class="card-kicker">Sustainability</span>
+              <h4 class="sidebar-title">The Green Corridor: Hydrogen Fuel Infrastructure in India</h4>
+              <p class="sidebar-desc">Reliance and Adani pivot towards massive electrolysis arrays to decarbonize heavy industry.</p>
+            </div>
+            <div class="sidebar-article reveal" style="border-bottom:none;padding-bottom:0">
+              <span class="card-kicker">Extraction</span>
+              <h4 class="sidebar-title">Brazilian Pre-Salt: Deep Sea Drilling in the Multipolar Era</h4>
+              <p class="sidebar-desc">Petrobras expands exploration rights as global demand for sweet crude spikes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analyst's Desk + Sidebar -->
+      <section class="section" style="margin-bottom:0;padding-bottom:80px">
+        <div class="grid-12">
+          <!-- Analyst Column -->
+          <div class="col-8">
+            <div style="margin-bottom:40px">
+              <h2 class="section-title" style="border-bottom:none;margin-bottom:8px">The Analyst's Desk</h2>
+              <p style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-surface-variant)">Deep Dive Geopolitical Insights</p>
+            </div>
+            <div class="grid-2">
+              <div class="analyst-card reveal">
+                <div class="analyst-card-head">
+                  <span class="material-symbols-outlined" style="color:var(--gold)">policy</span>
+                  <span class="analyst-badge">Confidential</span>
+                </div>
+                <div class="analyst-title">Currency Wars: The BRICS Pay Architecture</div>
+                <div class="analyst-desc">An examination of the technical hurdles and strategic advantages of a cross-border digital payment system designed to bypass SWIFT.</div>
+                <div class="analyst-author">
+                  <div class="analyst-avatar">AS</div>
+                  <div><div class="analyst-name">Amara Singh</div><div class="analyst-role">Senior Macro Analyst</div></div>
+                </div>
+              </div>
+              <div class="analyst-card reveal">
+                <div class="analyst-card-head">
+                  <span class="material-symbols-outlined" style="color:var(--gold)">hub</span>
+                  <span class="analyst-badge">Dispatch</span>
+                </div>
+                <div class="analyst-title">Semiconductor Sovereignty in East Asia</div>
+                <div class="analyst-desc">Mapping the shift in silicon supply chains as China accelerates self-sufficiency in 7nm and 5nm production nodes.</div>
+                <div class="analyst-author">
+                  <div class="analyst-avatar">JL</div>
+                  <div><div class="analyst-name">James Lowery</div><div class="analyst-role">Tech &amp; Intelligence Lead</div></div>
+                </div>
+              </div>
+              <div class="analyst-card reveal">
+                <div class="analyst-card-head">
+                  <span class="material-symbols-outlined" style="color:var(--gold)">public</span>
+                  <span class="analyst-badge">Exclusive</span>
+                </div>
+                <div class="analyst-title">The Arctic Route: Russia's Northern Sea Corridor</div>
+                <div class="analyst-desc">Icebreakers and strategic ports: How thinning polar ice is creating a year-round alternative to Suez.</div>
+                <div class="analyst-author">
+                  <div class="analyst-avatar">EM</div>
+                  <div><div class="analyst-name">Elena Morozova</div><div class="analyst-role">Geopolitics Specialist</div></div>
+                </div>
+              </div>
+              <div class="analyst-card reveal">
+                <div class="analyst-card-head">
+                  <span class="material-symbols-outlined" style="color:var(--gold)">analytics</span>
+                  <span class="analyst-badge">Market Watch</span>
+                </div>
+                <div class="analyst-title">Commodity Supercycles &amp; The New Reserve</div>
+                <div class="analyst-desc">Why real assets are becoming the primary hedge for central banks in the Global South.</div>
+                <div class="analyst-author">
+                  <div class="analyst-avatar">DH</div>
+                  <div><div class="analyst-name">David He</div><div class="analyst-role">Equity Research</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar -->
+          <div class="col-4">
+            <div class="sidebar-sticky">
+              <div class="widget">
+                <div class="widget-title">Market Intelligence</div>
+                <div class="market-row"><span class="market-name">Shanghai Composite</span><span class="market-val up">+1.24%</span></div>
+                <div class="market-row"><span class="market-name">MOEX Russia</span><span class="market-val down">-0.42%</span></div>
+                <div class="market-row"><span class="market-name">Bovespa Brazil</span><span class="market-val up">+0.15%</span></div>
+                <div class="market-row"><span class="market-name">Nifty 50 India</span><span class="market-val up">+0.89%</span></div>
+                <div class="market-row"><span class="market-name">JSE Top 40</span><span class="market-val flat">--</span></div>
+              </div>
+              <div class="widget">
+                <div class="widget-title">Trending Analysis</div>
+                <div class="trends-list">
+                  <div class="trend-item">
+                    <span class="trend-num">01</span>
+                    <p class="trend-text">How the BRICS+ expansion reshapes OPEC+ oil dynamics.</p>
+                  </div>
+                  <div class="trend-item">
+                    <span class="trend-num">02</span>
+                    <p class="trend-text">The role of Critical Minerals in the next decade of diplomacy.</p>
+                  </div>
+                  <div class="trend-item">
+                    <span class="trend-num">03</span>
+                    <p class="trend-text">Digital Yuan adoption rates in cross-border trade: A 2024 update.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="newsletter-box">
+                <div class="newsletter-title">The Morning Dispatch</div>
+                <p class="newsletter-desc">Daily intelligence briefings on the shifting global order. Delivered at 06:00 UTC.</p>
+                <input class="newsletter-input" type="email" placeholder="Institutional Email" id="home-email"/>
+                <button class="newsletter-btn" onclick="handleSubscribe('home-email',this)">Request Briefing</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div><!-- /container -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">BRICSZ</div>
+        <p class="footer-tagline">Defining the narrative of the multi-polar world through rigorous analysis and real-time intelligence for the global decision-maker.</p>
+        <div class="footer-socials">
+          <button class="footer-social-btn"><span class="material-symbols-outlined" style="font-size:16px">public</span></button>
+          <button class="footer-social-btn"><span class="material-symbols-outlined" style="font-size:16px">rss_feed</span></button>
+          <button class="footer-social-btn"><span class="material-symbols-outlined" style="font-size:16px">mail</span></button>
+        </div>
+      </div>
+      <div class="footer-links-grid">
+        <div>
+          <div class="footer-col-title">Network</div>
+          <a class="footer-link" href="#">Intelligence Network</a>
+          <a class="footer-link" href="#">Regional Hubs</a>
+          <a class="footer-link" href="#">Events &amp; Summits</a>
+          <a class="footer-link" href="#">Data Terminal</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <a class="footer-link" href="#">About Us</a>
+          <a class="footer-link" href="#">Editorial Guidelines</a>
+          <a class="footer-link" href="#">Privacy Policy</a>
+          <a class="footer-link" href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 BRICSZ Media Group. All rights reserved. Precise Geopolitical Intelligence.</span>
+      <div class="footer-legal">
+        <a href="#">Terms of Service</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Ad Choices</a>
+      </div>
+    </div>
+  </footer>
+</div><!-- /page-home -->
+
+
+<!-- ════════════════════════════════════════════════
+     ARTICLE PAGE — The Nuclear Renaissance
+════════════════════════════════════════════════ -->
+<div id="page-article" class="page">
+  <main>
+    <!-- Article Hero -->
+    <section class="article-hero">
+      <img
+        src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1600&q=85&fit=crop"
+        alt="Nuclear power plant at dusk"
+        onerror="this.src='https://picsum.photos/seed/nuclear2/1600/900'"
+      />
+      <div class="article-hero-overlay"></div>
+      <div class="article-hero-content">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+          <span class="article-tag">Energy &amp; Resources</span>
+          <span class="article-read-time">• 8 MIN READ</span>
+        </div>
+        <h1 class="article-title">The Nuclear Renaissance: BRICS Nations and the Future of Zero-Emission Energy</h1>
+        <div class="article-byline">
+          <img
+            class="article-author-img"
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&q=80&fit=crop&crop=face"
+            alt="Dr. Alistair Thorne"
+            onerror="this.src='https://picsum.photos/seed/analyst/128/128'"
+          />
+          <div>
+            <div class="article-author-name">Dr. Alistair Thorne</div>
+            <div class="article-author-role">Senior Geopolitical Analyst, BRICSZ Intelligence</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Article Body -->
+    <div class="article-section">
+      <!-- Side Controls -->
+      <div class="article-controls">
+        <button class="article-ctrl-btn" title="Bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+        <button class="article-ctrl-btn" title="Share"><span class="material-symbols-outlined">share</span></button>
+        <button class="article-ctrl-btn" title="Comment"><span class="material-symbols-outlined">mode_comment</span></button>
+        <div class="ctrl-divider"></div>
+        <span class="ctrl-label">Scroll to explore</span>
+      </div>
+
+      <!-- Article Text -->
+      <article class="article-body">
+        <p>The global energy map is being redrawn, and at the heart of this transformation lies a profound return to the most stable of low-carbon power sources: nuclear fission. While Western Europe remains locked in a fractious debate over decommissioning legacy plants, the BRICS nations—led by China, Russia, and India—are aggressively scaling up their domestic and export nuclear capabilities, positioning themselves as the new masters of the atomic century.</p>
+
+        <p>This shift is not merely environmental; it is a calculated geopolitical maneuver. For Moscow, Rosatom has become a primary tool of "soft power diplomacy," securing long-term influence through the construction of VVER reactors across the Global South. For Beijing, the Hualong One reactor represents a technological leap that challenges long-standing American and French hegemony in high-precision engineering.</p>
+
+        <blockquote class="article-blockquote">
+          <p class="article-blockquote-text">"Nuclear energy is no longer a localized utility; it is the fundamental currency of national sovereignty in a post-carbon era."</p>
+          <cite class="article-blockquote-cite">— Intelligence Memorandum #842</cite>
+        </blockquote>
+
+        <p>Recent satellite data obtained by BRICSZ Intelligence suggests that the commissioning of the Xudabao and Tianwan units is running ahead of schedule, potentially adding 4.8 gigawatts of capacity to the grid by Q3 2025. This acceleration is mirrored in India's ambitious "Three-Stage" program, which seeks to leverage the nation's massive thorium reserves, bypassing the uranium scarcity that has historically hampered its strategic autonomy.</p>
+
+        <!-- Inline Figure -->
+        <figure class="article-figure">
+          <img
+            src="https://images.unsplash.com/photo-1548337138-e87d889cc369?w=1400&q=85&fit=crop"
+            alt="Nuclear construction site aerial view"
+            onerror="this.src='https://picsum.photos/seed/reactor/1400/600'"
+          />
+          <div class="article-caption">Fig 1.2: NIGHTTIME INFRARED IMAGERY OF THE ROSATOM VVER-1200 CONSTRUCTION SITE. (SOURCE: BRICSZ SATELLITE NETWORK)</div>
+        </figure>
+
+        <p>The economic implications are equally staggering. The shift toward a nuclear-centric base load allows these economies to decouple growth from fossil fuel price volatility, providing a massive competitive advantage to their industrial sectors. As the BRICS block expands to include energy-rich nations like Egypt and the UAE, the synergy between capital, technology, and strategic patience is creating an unassailable lead in the future global energy market.</p>
+
+        <p>However, this renaissance is not without its critics. Concerns regarding waste management and the potential for dual-use technology proliferation remain high on the agenda of the IAEA. Yet, the prevailing sentiment in the corridors of power in Brasilia and Pretoria remains clear: the cost of energy poverty far outweighs the risks of atomic advancement.</p>
+
+        <div class="article-tags">
+          <span class="article-tag-chip">#AtomicDiplomacy</span>
+          <span class="article-tag-chip">#ChinaRising</span>
+          <span class="article-tag-chip">#Rosatom</span>
+          <span class="article-tag-chip">#EnergySecurity</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- Recommended Intelligence -->
+    <section class="rec-section">
+      <div class="rec-inner">
+        <div class="rec-header">
+          <h2 class="rec-title">Recommended Intelligence</h2>
+          <a class="rec-link" href="#">VIEW ALL DOSSIERS <span class="material-symbols-outlined" style="font-size:16px">trending_flat</span></a>
+        </div>
+        <div class="grid-3">
+          <div class="rec-card reveal">
+            <div class="rec-img">
+              <img
+                src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=85&fit=crop"
+                alt="Shanghai skyline finance"
+                onerror="this.src='https://picsum.photos/seed/shanghai/800/450'"
+              />
+            </div>
+            <span class="rec-kicker">Finance</span>
+            <h3 class="rec-card-title">The De-Dollarization Trap: Real-time Data from the Central Bank of Russia</h3>
+          </div>
+          <div class="rec-card reveal">
+            <div class="rec-img">
+              <img
+                src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&q=85&fit=crop"
+                alt="Container port trade"
+                onerror="this.src='https://picsum.photos/seed/port2/800/450'"
+              />
+            </div>
+            <span class="rec-kicker">Trade</span>
+            <h3 class="rec-card-title">New Silk Road 2.0: Beijing's Hidden Infrastructure Spend in 2024</h3>
+          </div>
+          <div class="rec-card reveal">
+            <div class="rec-img">
+              <img
+                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=85&fit=crop"
+                alt="Satellite data earth"
+                onerror="this.src='https://picsum.photos/seed/satellite/800/450'"
+              />
+            </div>
+            <span class="rec-kicker">Cyber Intelligence</span>
+            <h3 class="rec-card-title">Satellite Wars: How India is Challenging the GPS Monolith</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand-name">BRICSZ</div>
+        <p class="footer-tagline" style="font-style:italic">Providing the world's elite with precise geopolitical intelligence and editorial depth.</p>
+        <div class="footer-socials" style="margin-top:24px">
+          <button class="footer-social-btn" style="font-weight:700;font-size:14px">𝕏</button>
+          <button class="footer-social-btn" style="font-weight:700;font-size:14px">in</button>
+          <button class="footer-social-btn" style="font-weight:700;font-size:14px">yt</button>
+        </div>
+      </div>
+      <div class="footer-links-grid">
+        <div>
+          <div class="footer-col-title">Network</div>
+          <a class="footer-link" href="#">Intelligence Network</a>
+          <a class="footer-link" href="#">Editorial Guidelines</a>
+          <a class="footer-link" href="#">Analyst Program</a>
+          <a class="footer-link" href="#">Data Solutions</a>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <a class="footer-link" href="#">About</a>
+          <a class="footer-link" href="#">Privacy Policy</a>
+          <a class="footer-link" href="#">Terms of Service</a>
+          <a class="footer-link" href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 BRICSZ Media Group. All rights reserved. Precise Geopolitical Intelligence.</span>
+    </div>
+  </footer>
+</div><!-- /page-article -->
+
+
+<script>
+// ── Page routing ──────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const pb = document.getElementById('progress-bar');
+  if (id === 'article') {
+    pb.style.display = 'block';
+  } else {
+    pb.style.display = 'none';
+    pb.style.setProperty('--scroll', '0%');
+  }
+
+  // Update nav active state
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (id === 'home') document.querySelectorAll('.nav-link')[0].classList.add('active');
+  if (id === 'article') document.querySelectorAll('.nav-link')[2].classList.add('active');
+
+  setTimeout(initReveal, 80);
+}
+
+// ── Progress bar + nav hide ───────────────────────────
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const pb = document.getElementById('progress-bar');
+  if (pb.style.display === 'block') {
+    const s = document.documentElement.scrollTop;
+    const h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    pb.style.setProperty('--scroll', ((s / h) * 100) + '%');
+  }
+
+  const nav = document.getElementById('site-nav');
+  const cur = window.pageYOffset;
+  if (cur > 120) {
+    nav.style.transform = cur > lastScroll ? 'translateY(-100%)' : 'translateY(0)';
+    nav.style.transition = 'transform .3s ease';
+  } else {
+    nav.style.transform = 'translateY(0)';
+  }
+  lastScroll = cur;
+});
+
+// ── Scroll reveal ─────────────────────────────────────
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => obs.observe(el));
+}
+initReveal();
+
+// ── Mobile menu ───────────────────────────────────────
+document.getElementById('menu-open').addEventListener('click', () => {
+  document.getElementById('mobile-menu').classList.add('open');
+});
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+document.getElementById('menu-close').addEventListener('click', closeMobileMenu);
+
+// ── Newsletter subscribe ──────────────────────────────
+function handleSubscribe(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp && inp.value && inp.value.includes('@')) {
+    btn.textContent = '✓ Subscribed';
+    btn.style.opacity = '.65';
+    btn.style.pointerEvents = 'none';
+  } else if (inp) {
+    inp.style.borderColor = '#ef4444';
+    inp.focus();
+    setTimeout(() => inp.style.borderColor = '', 1500);
+  }
+}
+</script>
+</body>
+</html>
